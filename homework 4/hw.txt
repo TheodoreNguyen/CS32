@@ -1,0 +1,35 @@
+Theodore Nguyen
+CS32 Homework 4
+
+2) The code for Multiset's insert function uses the Multiset's find function;
+Multiset's find function compares two ItemType values in two nodes,
+specifically to see if they are not equal to each other, using the '!='
+operator. In our case, the ItemType is of type URL - the class URL, however,
+does not have a defined != operator; this essentially causes the
+compilation error, because a properly  defined != operator for URL would fix
+the problem.
+
+3b) We needed the overloaded function with two parameters because we needed
+the second passed parameter, the string, in order to keep track of the string
+path, otherwise there would be no method of adding and storing strings between
+recursions.
+
+4a) O(n^3). To put it bluntly, there is a triple nested loop, each iterating
+to value N, so Big O ends up being n * n * n, which is n^3.
+
+4b) O(n^3). This is exactly the same as 4a). All that was changed is that the
+second nested loop iterates to how much the outer loop goes to; because the
+outer loop iterates to n, then the second nested loop also iterates to n
+eventually. The inner most loop is unchanged, so Big O ends up being the same
+as the prior.
+
+5a) O(n^2). The outermost loop has complexity n, while the get function has
+complexity log n, contains calls the find function, which is a linear search
+of complexity n , and insert and swap have a constant complexity. Therefore,
+the Big O ends up being determined by the outermost loop, and the call of
+contains, n * n.
+
+5b) O(n log n). The first two for loops have complexity n + n; the sort
+function says that it has a complexity of n log n, while the last loop just
+has complexity n. Therefore, the big O is determined by the sort function,
+with complexity n log n.

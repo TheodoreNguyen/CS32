@@ -1,0 +1,159 @@
+Theodore Nguyen
+704-156-701
+CS32 Winter 2015
+
+Homework 5
+
+
+(1)(a)  
+Using the simplest binary search tree (BST) insertion algorithm (no balancing), show the tree that results 
+after inserting into the above tree the nodes 80, 65, 75, 45, 35 and 25 in that order. 
+
+50
+	20
+		10
+		40
+			30
+				25
+				35
+			45
+	60
+		xx
+		70
+			65
+			80
+				75
+				xx
+
+(1)(b)
+After inserting the nodes mentioned in part a, what is the resulting BST after you delete the node 30, then the 
+node 20? (Again, just use a simple deletion algorithm with no balancing. If you have an option of making a choice, 
+any correct choice is acceptable.)
+
+
+50
+	25
+		10
+		40
+			35
+			45
+	60
+		xx
+		70
+			65
+			80
+				75
+				xx
+				
+
+(1)(c)
+After inserting the nodes mentioned in part a, what would be printed out by in-order, pre-order, and post-order 
+traversals of the tree (assume your traversal function prints out the number at each node as it is visited)?
+
+in-order:   10 20 25 30 35 40 45 50 60 65 70 75 80
+pre-order:  50 20 10 40 30 25 35 45 60 70 65 80 75
+post-order: 10 25 35 30 45 40 20 65 75 80 70 60 50
+				
+
+
+
+
+
+
+(2)
+Consider the following operations on an initially empty heap h ordered by the < relationship. (This heap is a maxheap: the biggest item is at the top). The heap is represented as a binary tree:
+
+	h.insert(3);
+	h.insert(5);
+	h.insert(2);
+	h.insert(1);
+	h.insert(10);
+	h.insert(4);
+	int item;
+	h.remove(item);	// Removes the biggest item from the heap, and puts it in item
+	h.insert(8);
+	h.insert(6);
+	h.remove(item);
+	
+	
+	
+(2)(a) 
+Show the resulting heap (As in problem 1a, show the tree in some recognizable form.)
+
+6
+	3
+		1
+		2
+	5
+		4
+		xx
+		
+
+
+
+(2)(b)
+Show how your heap from part a would be represented in an array.
+
+FRONT	[6][3][5][1][2][4]	BACK
+
+
+
+
+(2)(c)
+Remove the top item from the heap and show the resulting array after the removal operation.
+
+5
+	3
+		1
+		2
+	4
+	
+FRONT	[5][3][4][1][2]	BACK
+
+
+
+
+
+
+
+(3) 
+In some binary search trees, each node has a left child pointer, a right child pointer and a parent 
+pointer. The parent pointer of a node points to its parent (duh!), or is nullptr if the node is the root node.
+ This problem will examine such trees.
+ 
+(3)(a)
+Show a C++ structure/class definition for a binary tree node that has both child node pointers and a parent node pointer. 
+Assume the data stored in each node is an int.
+
+
+struct Node
+{
+	int data;
+	Node* parent;
+	Node* right;
+	Node* left;
+};
+
+
+(3)(b)
+Write pseudocode to insert a new node into a binary search tree with parent pointers. (Hint: You can find binary
+ search tree insertion code on pp. 471-473).
+ 
+ insert(Node* newnode, Node* root)
+ 	if the root ptr points to nullptr
+	 	then set the root to the newnode
+		set newnode's parent to null since it is the root node
+	else if newnode's value is less than root's value
+		if root has no left child
+			point left to newnode
+			set newnode's parent to left
+		else
+			recursively call insert using the newnode as the first parameter and root's left child as the second parameter
+	else if newnode's value is greater than root's value
+		if root has no right child
+			point right to newnode
+			set newnode's parent to right
+		else
+			recursively call insert using the newnode as the first parameter and root's right child as the second parameter
+			
+		
