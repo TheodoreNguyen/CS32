@@ -1,0 +1,213 @@
+Theodore Nguyen
+704-156-701
+CS32 Winter 2015 Lecture 5 Smallberg
+Project 2
+
+
+
+Description:
+
+The list is circular; it is has a dummy node as well. The dummy node 
+initialized to point to the head pointer. The head pointer obviously points
+to the dummy node.
+
+The list nodes each have a before pointer, next pointer, a count, and a
+data member of type ItemType.
+
+The multiset is defaultly initialized with zero size and zero uniqueSize. 
+The dummy node is immediately created with both pointers pointing to 
+the head pointer at zero capacity.
+
+
+My destructor is a bit awkward, although doing the job correctly. I wasn't
+sure if I was going to follow the circular interface, so I ended up doing
+it for a noncircular interface, but it should work both ways.
+
+The copy constructor required alot of step-by-step processing to integrate; 
+Essentially it copies the non-pointer values, then sets up the node like the
+default constructor. Afterwards, two traverser Node pointers are created:
+One for traversing the other array, and one for initializing the current 
+object. The initialization simply happens step by step, with the current
+object's m_data and m_count equilibrating to that of the other object. When
+the other object reaches its m_head, the current object's last node has its 
+pointers corrected with it's m_head.
+
+The assignment operator literally just copies code in the 1) destructor
+2) copy constructor 3) return *this format.
+
+Empty, size, and uniqueSize functions are trivial.
+
+The insert function checks for three cases: 1) if the value already exists 
+in the Multiset, then the value is found and incremented. 2) if the value 
+does not exist in the multiset and this is the first value in the multiset.
+3) if the value does not exist in the multiset and this is NOT the first 
+value in the multiset. Order in which we initialized each m_next and m_before 
+pointers was crucial here.
+
+
+The erase function checks three (really only two because the last is trivial)
+cases: 1) if the value exists in the multinode and erasing one will not 
+set count = 0. 2) the latter, except it DOES set count = 0. In this case, 
+the node must be deleted; a temp pointer to a node is set to the node to be
+deleted, and its respective before and after nodes are then set to each other.
+delete is then called on the temp pointer. 3) when the value isnt in the set.
+
+
+EraseAll uses the same exact code as the erase function's 2nd case (essentially).
+
+Contains and Count are trivial.
+
+Get checks if the given integer is in bounds, then traverses the list using
+both a temp Node pointer (in order to actually traverse it!) and an incrementing
+integer (to determine when to stop), and then the values in the resulting Node
+are equated, returned, etc.
+
+
+Swap just uses a temp to swap the three variables; the list itself can be
+just swapped since its just a pointer to a list.
+
+Dump is used for debugging as it prints out each node's data, counts, and 
+then the object's size. Called whenever after we use a function to see the 
+result to debug.
+
+Both combine and Subtract follow a similar algorithm; Combine essentially sets 
+result to ms1 and then traverses ms2 using integer count, and obtains its 
+data using Get, inserting the latter to Result. Subtract does nearly
+the same thing, but instead of adding ms2's values, it calls erase to 
+subtract ms2's values from result.
+
+
+
+Psueodcode for my algorithms can essentially be derived from my commenting
+for each function in the Multiset.cpp file.
+
+
+I did not test the program with ItemType set to std::string; I tested it 
+with ItemType set to unsigned long instead. Here are my test cases in my
+main function, which includes several of the ones already given from the spec
+and homework 1's spec.
+
+
+int main()
+{							//This is the provided test function, testing insert, size, uniqueSize, and count
+	Multiset ulms;
+	assert(ulms.insert(20));
+	assert(ulms.insert(10));
+	assert(ulms.insert(20));
+	assert(ulms.insert(30));
+	assert(ulms.insert(20));
+	assert(ulms.insert(10));
+	assert(ulms.size() == 6 && ulms.uniqueSize() == 3);
+	assert(ulms.count(10) == 2);
+	assert(ulms.count(20) == 3);
+	assert(ulms.count(30) == 1);
+	assert(ulms.count(40) == 0);
+	
+	
+	Multiset a;							//testing the constructor
+	a.dump();
+	cerr << endl << "-------------------" << endl << endl;
+	a.insert(10);
+	a.dump();
+	cerr << endl << "-------------------" << endl << endl;
+	a.insert(10);
+	a.insert(10);
+	a.insert(200);							//testing the insert function 
+	a.insert(200);
+	a.insert(10000);
+	a.dump();							//NOTE: dump is called to essentially output the entire list on screen for debugging
+	for (int k = 0; k < a.uniqueSize(); k++)
+	{
+		ItemType x;						//Taken from homework 1. Tests get.
+		int n = a.get(k, x);
+		cerr << x << " occurs " << n << " times." << endl;
+	}
+	a.dump();
+	cerr << endl << "-------------------" << endl << endl;
+	a.erase(10);							//tests erase; before i changed it, it tested the result of erasing with count = 1
+	a.insert(125);
+	a.insert(125);
+	assert(a.count(125) == 2);
+	a.dump();
+	cerr << endl << "-------------------" << endl << endl;
+	a.erase(10000);
+	a.eraseAll(125);						//test eraseall
+	cerr << a.erase(123121) << endl;
+	a.dump();
+	assert(!a.contains(ItemType(1261)));				//test contains, and counts
+	assert(a.contains(200));
+	assert(a.count(200) == 2);
+
+
+	Multiset ms;
+	assert(ms.empty());						//generic test taken from the spec
+	unsigned long x = 999;
+	assert(ms.get(0, x) == 0 && x == 999);  // x unchanged by get failure
+	assert(!ms.contains(42));
+	ms.insert(42);
+	ms.insert(42);
+	assert(ms.size() == 2 && ms.uniqueSize() == 1);
+	assert(ms.get(1, x) == 0 && x == 999);  // x unchanged by get failure
+	assert(ms.get(0, x) == 2 && x == 42);
+	cerr << "Passed all tests" << endl;
+
+	cerr << "---------" << endl;
+
+	Multiset d(ms);   // a can hold at most 1000 distinct items			//generic test taken from homework 1's spec
+	Multiset b(a);      // b can hold at most 5 distinct items
+	Multiset c;         // c can hold at most DEFAULT_MAX_ITEMS distinct items
+	ItemType v[6] = { 1, 2, 3, 4, 5, 6 };
+	// No failures inserting 5 distinct items twice each into b
+	for (int k = 0; k < 5; k++)
+	{
+		assert(b.insert(v[k]));
+		assert(b.insert(v[k]));
+	}
+	b.dump();
+
+	cerr << "-----------" << endl;								//tests swap
+	// When two Multisets' contents are swapped, their capacities are swapped
+	// as well:
+	a.swap(b);
+	b.dump();
+
+	cerr << "-----------" << endl;
+	Multiset ms1;
+	ms1.insert(2);
+	ms1.insert(2);
+	ms1.insert(2);
+	ms1.insert(8);
+	ms1.insert(3);					//prepares to test combine and subtract, and then does so.
+	ms1.insert(3);
+	ms1.insert(9);
+	ms1.insert(5);
+	ms1.dump();
+
+	Multiset ms2;
+	ms2.insert(6);
+	ms2.insert(3);
+	ms2.insert(8);
+	ms2.insert(8);
+	ms2.insert(5);
+	ms2.insert(10);
+	ms2.dump();
+	cerr << "-----" << endl;
+	a.dump();
+	cerr << "-------------" << endl;
+	Multiset result(ms2);
+	result.dump();
+	cerr << "-----------------" << endl;
+	result = ms1;
+	result.dump();
+	cerr << "---------------" << endl;
+	combine(ms1, ms2, result);
+	result.dump();
+
+	cerr << "-----------" << endl;
+	subtract(ms1, ms2, result);
+
+	result.dump();
+}
+
+
+

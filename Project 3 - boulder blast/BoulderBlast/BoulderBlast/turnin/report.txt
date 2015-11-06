@@ -1,0 +1,192 @@
+Theodore Nguyen
+704-156-701
+CS32 project 3 winter 2015 report
+
+
+
+1) description of public fcns: i used the recommeneded design posted on the web
+
+Actor:
+
+-I made doSomething pure virtual, because, obviously we do not have anything of
+type actor only, so its derived classes are what matters
+
+- I created a function "getcollide" on the actor, so for the majority of
+classes derived them it, i can determine whther or not another object
+can overlap with that object. For example, goodies would return true
+for that function since they can overlap, while walls and boulders (except
+when pushing) would return false
+
+- I have a "getActorType" function that returns essentially the IID_IMG
+integer of the type used to identifiy what picture is sent onscreen. 
+on the other hand, I used it instead for whenever I parsed the Actor container
+to see which classes i was looking it
+
+- there is a pointer to the StudentWOrld, obviously, so we can access the
+main game 
+
+
+
+kelptofactory: not fully implementated at all
+
+
+
+bullet: based off of actor; created in robot and player dosomethings as they fire
+
+
+
+hole: based off actor; i essentially had nothing in this object besides
+in dosomething, the interaction with the boulders in that it would be both set
+to not visible when overlapped
+
+
+exit: made as part of the studentplayer class instead of the vector container!
+	only doSomething operatesto see 1) if it needs to be revealed and 
+	2) if the player it on it when it is revealed
+
+pickup: not much to say here - subclass of actor
+
+jewel: subclass of pickup
+
+
+goodies: ammo, extra life, health
+	all implemented in very similar manners besides what they effect.
+I did not get to kleptobots unfortunately so this part was not very complicated 
+whatsoever
+
+
+agent: essentially follows the design on the website
+
+
+klepobot: wasnt finished, but i got through the whole making the random 
+generator - it doesnt work yet and its not implemented in the code though 
+
+
+snarlbot: works like a jiffy, but doesn't fire correctly whatsoever
+
+
+
+
+player: I essentially made the player my key throughout the whole project
+like I said earlier, I used the player to bridge the connection between the 
+studentWorld and the objects the player interacts with, so we have alot of
+fcns
+
+
+- doSomething : mostly takes in input to move - modified for the whole 
+boulder movement thing 
+
+- getHpPercent: gets your HP in a percent, used sstream 
+- getAmmo: self explainatory
+- reduceBonus: self explainatory reduces the bonus every tick, used for the move() fcn
+- getbonus: used for displaying the bonus on the display
+
+
+- levelfinished: used in conjunction with exit to determne when the level is done
+-setToFinish: the same as the latter, except is what actually changes it rather than working as a boolean
+
+- jewelsLeft : also used in conjunction with jewels and exit to end the level
+
+-obtainjewel, initializejewel, setjewels: I had ALOT of problems with getting
+exit to end the level through the studentWorld object in move(). 
+I essetially had to use player as a bridge, as ive said before. But because
+i made exit a member variable, i could no longer set the number of jewels
+to zero on the player as a refernece for when the exit should open, since 
+the exit no longer was in the container. therefore, i had to do a rather
+inefficient method of setting the jewels equal to -1 whenever it equaled zero, 
+after the move() started in order to distinquish between when the jewels were 
+actally all collected, or if the game level just started
+
+-damageplayer is self-explainatory
+
+-increase hp, ammo, and shootbullet are as well : first two used for goodies
+last one is used for making sure u cant shoot unlimited bullets
+
+
+
+StudentWorld:
+
+- StudentWorld I gave four public members: the level, the player, the 
+exit, and the container. The level was needed to appropiately contaentate
+strings in the init() function, the player would apart from the container 
+because the player was more or less the branch between using the interface
+and the game actions. It was not all that powerfully helpful though, as I 
+had to make the exit a member variable as well because I just couldnt get 
+a function that I could call in StudentWorld that would set the exit to
+reveal once all the saphhires are found, so i just added the exit to the
+studentworld object itself
+
+
+- "canIMoveThere" allows me to see if that spot is open for an object to move
+to, aka there are no other noncollideableobjects
+
+-"addactor" was used to add a bullet to the container from the player and
+ robot classes that fired a bullet, since the bullet was not explicitly
+made from the map file
+
+- the level functions are simply said used for init() to go from level to level
+
+- PushBackBullet essentially did what addActor does for the bullets
+
+- filename(int lvl) was used to concatenate strings for opening level files
+
+- updatedisplaytext essentially did what was asked in the spec, aka add 
+the top writing score, lives, etc
+
+- gameFinished was what was called to make the game go on to the next level
+once the player was on the revealed exit.
+
+
+
+
+
+
+
+
+
+2) functionality failed to finish
+
+I ended up missing out on alot of functionality due to, admitedly, starting late.
+
+- My SnarlBots are good exceptfor the fact that they dont exactly fire when 
+i am in their range, and fire when i am not
+------I could not implement any of the kleptobots or the factory in time
+- some of the sounds may not be implemented
+- when pushing a boulder, the player may (somehow!) push it from one more
+space away, essentiallly jumping a space
+- and finally, the game is noticably very laggy compared to the sample! I 
+don't know why though, and it may be because of my more amateur, inefficient 
+algorithms
+
+
+
+
+
+
+
+
+3) descripton of assumptions/design implementations
+
+- Not much i can say here
+
+
+
+
+
+
+
+
+4) description of testing classes
+
+- I tested the wall and the player first by seeing if i can move and not go inside them
+- i tested the boulders and robots by seeing if i could shoot and kill them
+- i tested the bullet shooting by killing myself with it (which also tested
+whether or not the HP was correctly implemented) when the bullet did not
+then have the movement per tick
+- i tested the snarbots by getting into their range and seeing when they shoot me
+- i tested if i had any lowkey dynamic memory issues, a nullpointer, etc, 
+by, for example, killing my player if my destructor/cleanup wasnt working right
+or by destroying something with shooting after implementing the destructor
+
+
+
